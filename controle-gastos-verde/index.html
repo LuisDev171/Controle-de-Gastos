@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#123b2c">
+  <meta name="description" content="Controle seus gastos de cartão, casa, carro e cachorro em um só lugar.">
+  <title>Verde — Controle de Gastos</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="auth-view" class="auth-view">
+    <section class="auth-card" aria-labelledby="auth-title">
+      <div class="brand-mark large" aria-hidden="true">V</div>
+      <p class="eyebrow">SUAS FINANÇAS, MAIS CLARAS</p>
+      <h1 id="auth-title">Verde</h1>
+      <p class="auth-subtitle">Organize seus gastos e acompanhe para onde seu dinheiro está indo.</p>
+
+      <div class="auth-tabs" role="tablist" aria-label="Acesso">
+        <button class="auth-tab active" id="login-tab" type="button" role="tab" aria-selected="true">Entrar</button>
+        <button class="auth-tab" id="register-tab" type="button" role="tab" aria-selected="false">Criar conta</button>
+      </div>
+
+      <form id="auth-form" novalidate>
+        <div class="field" id="name-field" hidden>
+          <label for="auth-name">Seu nome</label>
+          <input id="auth-name" name="name" type="text" autocomplete="name" placeholder="Como podemos chamar você?" maxlength="60">
+        </div>
+        <div class="field">
+          <label for="auth-email">E-mail</label>
+          <input id="auth-email" name="email" type="email" autocomplete="email" placeholder="voce@email.com" required>
+        </div>
+        <div class="field">
+          <label for="auth-password">Senha</label>
+          <input id="auth-password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" minlength="8" required>
+          <small id="password-help" class="field-help">Use pelo menos 8 caracteres.</small>
+        </div>
+        <p id="auth-message" class="form-message" role="alert" aria-live="polite"></p>
+        <button id="auth-submit" class="button button-primary button-full" type="submit">Entrar</button>
+      </form>
+      <p class="local-note"><span aria-hidden="true">🔒</span> Seus dados ficam salvos somente neste dispositivo. Não há sincronização ou recuperação de conta.</p>
+    </section>
+  </div>
+
+  <div id="app-view" class="app-view" hidden>
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-mark" aria-hidden="true">V</div>
+        <div><strong>Verde</strong><span>CONTROLE DE GASTOS</span></div>
+      </div>
+      <p class="nav-caption">MENU PRINCIPAL</p>
+      <nav id="desktop-nav" class="side-nav" aria-label="Categorias"></nav>
+      <div class="sidebar-bottom">
+        <div class="profile-mini"><div class="avatar" id="user-avatar">V</div><div class="profile-copy"><strong id="sidebar-user-name">Usuário</strong><span id="sidebar-user-email">email</span></div></div>
+        <button id="logout-button" class="logout-button" type="button"><span aria-hidden="true">↪</span> Sair da conta</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="topbar-eyebrow">VISÃO GERAL</p>
+          <h2 id="greeting-title">Olá!</h2>
+          <p id="greeting-subtitle" class="muted">Veja o resumo das suas despesas.</p>
+        </div>
+        <div class="topbar-actions">
+          <label class="month-control" for="month-filter"><span aria-hidden="true">▦</span><span class="sr-only">Filtrar por mês</span><select id="month-filter" aria-label="Filtrar por mês"></select></label>
+          <button id="add-expense-button" class="button button-primary" type="button"><span aria-hidden="true">＋</span> Novo gasto</button>
+        </div>
+      </header>
+
+      <section id="summary-cards" class="summary-grid" aria-label="Resumo dos gastos"></section>
+
+      <section class="content-section">
+        <div class="section-heading">
+          <div><p class="eyebrow" id="section-eyebrow">SEU RESUMO</p><h3 id="section-title">Todos os gastos</h3><p class="muted" id="section-description">Acompanhe suas despesas por categoria.</p></div>
+          <div class="section-total"><span id="section-total-label">Total no período</span><strong id="section-total-value">R$ 0,00</strong></div>
+        </div>
+
+        <div class="overview-grid">
+          <article class="panel chart-panel">
+            <div class="panel-heading"><div><h4 id="chart-title">Distribuição dos gastos</h4><p class="muted" id="chart-subtitle">Por categoria</p></div><span class="panel-icon" aria-hidden="true">◔</span></div>
+            <div class="chart-content"><div class="chart-wrap"><canvas id="expense-chart" width="360" height="280" role="img" aria-label="Gráfico de pizza dos gastos"></canvas><div id="chart-empty" class="chart-empty" hidden>Sem gastos neste período</div></div><div id="chart-legend" class="chart-legend"></div></div>
+          </article>
+
+          <article class="panel category-panel">
+            <div class="panel-heading"><div><h4 id="breakdown-title">Onde você gastou</h4><p class="muted">Valores no período selecionado</p></div></div>
+            <div id="category-breakdown" class="category-breakdown"></div>
+          </article>
+        </div>
+
+        <article class="panel transactions-panel">
+          <div class="panel-heading transactions-heading"><div><h4>Últimos lançamentos</h4><p class="muted" id="transactions-caption">Suas despesas registradas</p></div><span id="transaction-count" class="count-pill">0 lançamentos</span></div>
+          <div id="expense-list" class="expense-list"></div>
+        </article>
+      </section>
+      <footer class="app-footer">Feito para deixar sua vida financeira mais organizada. <span>Seus dados permanecem neste dispositivo.</span></footer>
+    </main>
+    <nav id="mobile-nav" class="mobile-nav" aria-label="Categorias"></nav>
+  </div>
+
+  <div id="expense-modal" class="modal-backdrop" hidden>
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-heading"><div><p class="eyebrow">NOVO LANÇAMENTO</p><h3 id="modal-title">Adicionar gasto</h3></div><button id="close-modal" class="icon-button" type="button" aria-label="Fechar">×</button></div>
+      <form id="expense-form" novalidate>
+        <div class="form-grid">
+          <div class="field"><label for="expense-group">Categoria principal</label><select id="expense-group" required></select></div>
+          <div class="field"><label for="expense-type">Tipo de gasto</label><select id="expense-type" required></select></div>
+          <div class="field field-wide"><label for="expense-description">Descrição</label><input id="expense-description" type="text" maxlength="100" placeholder="Ex.: Compra do mercado" required></div>
+          <div class="field"><label for="expense-amount">Valor (R$)</label><input id="expense-amount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00" required></div>
+          <div class="field"><label for="expense-date">Data</label><input id="expense-date" type="date" required></div>
+          <div class="field field-wide" id="installments-field" hidden><label for="expense-installments">Quantidade de parcelas</label><input id="expense-installments" type="number" min="1" max="120" step="1" value="1"><small class="field-help">Informe o número de parcelas. O valor lançado será considerado no mês da data escolhida.</small></div>
+        </div>
+        <p id="expense-message" class="form-message" role="alert" aria-live="polite"></p>
+        <div class="modal-actions"><button id="cancel-modal" class="button button-secondary" type="button">Cancelar</button><button class="button button-primary" type="submit">Salvar gasto</button></div>
+      </form>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js" defer></script>
+</body>
+</html>
